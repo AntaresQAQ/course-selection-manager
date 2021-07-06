@@ -52,7 +52,7 @@ export class AdminController {
         error: RegisterResponseError.ALREADY_LOGGED,
       };
     }
-    return await this.adminService.register(request.username,request.password);
+    return await this.adminService.register(request.username, request.password);
   }
 
   @Post('reset')
