@@ -8,7 +8,7 @@ import {
 import { StudentEntity } from '@/student/student.entity';
 import { SelectionEntity } from '@/selection/selection.entity';
 
-@Entity()
+@Entity('course')
 export class CourseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,8 +23,8 @@ export class CourseEntity {
   student_limit: number;
 
   @ManyToOne(() => SelectionEntity, (selection) => selection.courses)
-  selection: SelectionEntity;
+  selection: Promise<SelectionEntity>;
 
   @ManyToMany(() => StudentEntity, (student) => student)
-  students: StudentEntity[];
+  students: Promise<StudentEntity[]>;
 }

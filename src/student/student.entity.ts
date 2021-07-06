@@ -15,9 +15,9 @@ export class StudentEntity {
 
   @ManyToMany(() => SelectionEntity, (selection) => selection.students)
   @JoinTable()
-  selections: SelectionEntity[];
+  selections: Promise<SelectionEntity[]>;
 
   @ManyToMany(() => CourseEntity, (course) => course.students)
   @JoinTable()
-  courses: CourseEntity[];
+  courses: Promise<CourseEntity[]>;
 }
