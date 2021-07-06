@@ -40,7 +40,6 @@ async function initialize(): Promise<
   // use swagger
   const options = new DocumentBuilder()
     .setTitle('course-selection-manager')
-    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('/docs', app, document);
