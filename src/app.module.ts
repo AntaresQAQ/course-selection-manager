@@ -7,6 +7,7 @@ import { AdminModule } from './admin/admin.module';
 import { StudentModule } from './student/student.module';
 import { SelectionModule } from './selection/selection.module';
 import { CourseModule } from './course/course.module';
+import { MainModule } from './main/main.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CourseModule } from './course/course.module';
     forwardRef(() => StudentModule),
     forwardRef(() => SelectionModule),
     forwardRef(() => CourseModule),
+    forwardRef(() => MainModule),
   ],
   controllers: [AppController],
   providers: [AppService],
