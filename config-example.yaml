@@ -1,0 +1,14 @@
+server:
+  hostname: 127.0.0.1
+  port: 5001
+
+database:
+  type: mariadb
+  host: 127.0.0.1
+  port: 3306
+  username: username
+  password: password
+  database: database
+
+redis: redis://127.0.0.1:6379
+secret: secret
