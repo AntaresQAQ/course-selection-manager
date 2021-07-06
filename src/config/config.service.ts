@@ -1,7 +1,7 @@
 import { AppConfig } from '@/config/config.schema';
 
-import * as yaml from 'js-yaml';
-import * as fs from 'fs-extra';
+import yaml from 'js-yaml';
+import fs from 'fs-extra';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
