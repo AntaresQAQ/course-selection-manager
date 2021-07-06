@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AdminInfo } from './admin-info.dto';
+import { SessionInfoResponseDto } from '@/main/dto/session-info-response.dto';
 
 export enum RegisterResponseError {
   NOT_ALLOW_REGISTER = 'NOT_ALLOW_REGISTER',
@@ -12,5 +12,5 @@ export class RegisterResponseDto {
   error?: RegisterResponseError;
 
   @ApiProperty()
-  info?: AdminInfo;
+  sessionInfo?: SessionInfoResponseDto;
 }
