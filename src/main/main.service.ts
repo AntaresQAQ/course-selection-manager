@@ -1,7 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { SessionInfoResponseDto } from '@/main/dto/session-info-response.dto';
+
 import { AdminService } from '@/admin/admin.service';
 import { StudentService } from '@/student/student.service';
+
+import { SessionInfoResponseDto } from '@/main/dto/session-info-response.dto';
+import { AdminInfo } from '@/admin/dto/admin-info.dto';
+import { StudentInfo } from '@/student/dto/student-info.dto';
 
 @Injectable()
 export class MainService {
@@ -17,10 +21,18 @@ export class MainService {
     id: number,
   ): Promise<SessionInfoResponseDto> {
     if (type === 'admin') {
-      const info = await this.adminService.getAdminInfo(id);
+      const admin = await this.adminService.findAdminById(id);
+      const info: AdminInfo = admin && {
+        id: admin.id,
+        username: admin.username,
+      };
       return { type, info };
     } else if (type === 'student') {
-      const info = await this.studentService.getStudentInfo(id);
+      const student = await this.studentService.findStudentById(id);
+      const info: StudentInfo = student && {
+        id: student.id,
+        name: student.name,
+      };
       return { type, info };
     }
   }
