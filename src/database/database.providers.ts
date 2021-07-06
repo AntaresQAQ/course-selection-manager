@@ -11,7 +11,7 @@ export const databaseProviders = [
       password: configService.config.database.password,
       database: configService.config.database.database,
       entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
-      logging: !!process.env.COURSE_SELECTION_MANAGER_LOG_SQL,
+      logging: configService.config.environment.logSQL,
       synchronize: true,
     }),
     inject: [ConfigService],

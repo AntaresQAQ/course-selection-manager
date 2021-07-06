@@ -1,4 +1,10 @@
-import { IsIn, IsIP, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsIn,
+  IsIP,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { IsPortNumber } from '@/common/validators';
 import { Type } from 'class-transformer';
 
@@ -30,6 +36,14 @@ class DatabaseConfig {
   readonly database: string;
 }
 
+class EnvironmentConfig {
+  @IsBoolean()
+  readonly allowRegister: boolean;
+
+  @IsBoolean()
+  readonly logSQL: boolean;
+}
+
 export class AppConfig {
   @ValidateNested()
   @Type(() => ServerConfig)
@@ -44,4 +58,8 @@ export class AppConfig {
 
   @IsString()
   readonly secret: string;
+
+  @ValidateNested()
+  @Type(() => EnvironmentConfig)
+  readonly environment: EnvironmentConfig;
 }
