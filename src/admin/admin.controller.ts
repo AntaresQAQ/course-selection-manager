@@ -12,6 +12,11 @@ import {
   RegisterResponseError,
 } from './dto/register-response.dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
+import {
+  LoginResponseDto,
+  LoginResponseError,
+} from '@/admin/dto/login-response.dto';
+import { LoginRequestDto } from '@/admin/dto/login-request.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -35,7 +40,38 @@ export class AdminController {
   }
 
   @Post('login')
-  async login() {}
+  async login(
+    @Session() session: Record<string, any>,
+    @Body() request: LoginRequestDto,
+  ): Promise<LoginResponseDto> {
+    if (session.sid || session.type) {
+      return {
+        error: LoginResponseError.ALREADY_LOGGED,
+      };
+    }
+    const admin = await this.adminService.findAdminByUsername(request.username);
+    if (!admin) {
+      return {
+        error: LoginResponseError.ERROR_USERNAME,
+      };
+    }
+    if (!(await this.adminService.checkPassword(admin, request.password))) {
+      return {
+        error: LoginResponseError.ERROR_PASSWORD,
+      };
+    }
+    session.sid = admin.id;
+    session.type = 'admin';
+    return {
+      sessionInfo: {
+        type: session.type,
+        info: {
+          id: admin.id,
+          username: admin.username,
+        },
+      },
+    };
+  }
 
   @Post('register')
   async register(
@@ -52,7 +88,24 @@ export class AdminController {
         error: RegisterResponseError.ALREADY_LOGGED,
       };
     }
-    return await this.adminService.register(request.username, request.password);
+    const { username, password } = request;
+    if (!(await this.adminService.checkUsernameAvailability(username))) {
+      return {
+        error: RegisterResponseError.USERNAME_ALREADY_USED,
+      };
+    }
+    const admin = await this.adminService.register(username, password);
+    session.type = 'admin';
+    session.sid = admin.id;
+    return {
+      sessionInfo: {
+        type: session.type,
+        info: {
+          id: admin.id,
+          username: admin.username,
+        },
+      },
+    };
   }
 
   @Post('reset')
