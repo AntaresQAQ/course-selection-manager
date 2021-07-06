@@ -24,3 +24,14 @@ export function IsPortNumber(validationOptions?: ValidationOptions) {
     validationOptions,
   );
 }
+
+export function isUsername(str: string) {
+  return /^[a-zA-Z0-9\-_.#$]{3,24}$/.test(str);
+}
+
+export function IsUsername(validationOptions?: ValidationOptions) {
+  return If(
+    (value) => typeof value === 'string' && isUsername(value),
+    validationOptions,
+  );
+}
