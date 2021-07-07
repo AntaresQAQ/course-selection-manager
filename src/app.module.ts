@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 
-import { SharedModule } from './shared.module';
+import { ConfigModule } from '@/config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { MainModule } from './main/main.module';
 import { AdminModule } from './admin/admin.module';
@@ -10,7 +10,7 @@ import { CourseModule } from './course/course.module';
 
 @Module({
   imports: [
-    SharedModule,
+    ConfigModule,
     forwardRef(() => DatabaseModule),
     forwardRef(() => AdminModule),
     forwardRef(() => StudentModule),
