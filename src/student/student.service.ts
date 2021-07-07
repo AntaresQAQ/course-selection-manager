@@ -4,7 +4,7 @@ import { Connection, Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 
 import { StudentEntity } from './student.entity';
-import { StudentRegisterInfo } from './dto/student-add-students-request.dto';
+import { StudentRegisterInfoDto } from './dto/student-add-students-request.dto';
 
 @Injectable()
 export class StudentService {
@@ -35,7 +35,7 @@ export class StudentService {
   }
 
   async registerStudents(
-    students: StudentRegisterInfo[],
+    students: StudentRegisterInfoDto[],
   ): Promise<StudentEntity[]> {
     const studentsEntity: StudentEntity[] = [];
     await this.connection.transaction(

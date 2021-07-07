@@ -11,7 +11,7 @@ import {
 import { Type } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
-export class StudentRegisterInfo {
+export class StudentRegisterInfoDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
@@ -36,11 +36,11 @@ export class StudentRegisterInfo {
 export class StudentAddStudentsRequestDto {
   @ApiModelProperty({
     isArray: true,
-    type: StudentRegisterInfo,
+    type: StudentRegisterInfoDto,
   })
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested()
-  @Type(() => StudentRegisterInfo)
-  readonly students: StudentRegisterInfo[];
+  @Type(() => StudentRegisterInfoDto)
+  readonly students: StudentRegisterInfoDto[];
 }
