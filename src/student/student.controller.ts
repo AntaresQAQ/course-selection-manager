@@ -12,6 +12,11 @@ import {
   StudentLoginResponseDto,
   StudentLoginResponseError,
 } from './dto/student-login-response.dto';
+import { StudentRemoveStudentsRequestDto } from './dto/student-remove-students-request.dto';
+import {
+  StudentRemoveStudentsResponseDto,
+  StudentRemoveStudentsResponseError,
+} from './dto/student-remove-students-response.dto';
 
 @Controller('student')
 export class StudentController {
@@ -91,6 +96,27 @@ export class StudentController {
       };
     }
     await this.studentService.registerStudents(request.students);
+    return {
+      result: 'SUCCEED',
+    };
+  }
+
+  @Post('removeStudents')
+  async removeStudents(
+    @Session() session: Record<string, any>,
+    @Body() request: StudentRemoveStudentsRequestDto,
+  ): Promise<StudentRemoveStudentsResponseDto> {
+    if (!session.uid || !session.type) {
+      return {
+        error: StudentRemoveStudentsResponseError.NOT_LOGGED,
+      };
+    }
+    if (session.type !== 'admin') {
+      return {
+        error: StudentRemoveStudentsResponseError.PERMISSION_DENIED,
+      };
+    }
+    await this.studentService.deleteStudents(request.ids);
     return {
       result: 'SUCCEED',
     };

@@ -54,4 +54,8 @@ export class StudentService {
     );
     return studentsEntity;
   }
+
+  async deleteStudents(ids: number[]): Promise<void> {
+    await this.studentRepository.delete(ids);
+  }
 }

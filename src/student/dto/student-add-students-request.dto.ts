@@ -9,7 +9,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
 export class StudentRegisterInfoDto {
   @ApiProperty()
@@ -34,7 +33,7 @@ export class StudentRegisterInfoDto {
 }
 
 export class StudentAddStudentsRequestDto {
-  @ApiModelProperty({
+  @ApiProperty({
     isArray: true,
     type: StudentRegisterInfoDto,
   })
