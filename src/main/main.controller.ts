@@ -1,21 +1,21 @@
-import { Controller, Get, Post, Session } from '@nestjs/common';
+import { Controller, Get, Session } from '@nestjs/common';
 
 import { MainService } from './main.service';
 
-import { SessionInfoResponseDto } from './dto/session-info-response.dto';
+import { GetSessionInfoResponseDto } from './dto/get-session-info-response.dto';
 import {
   LogoutResponseDto,
   LogoutResponseError,
 } from './dto/logout-response.dto';
 
-@Controller('main')
+@Controller()
 export class MainController {
   constructor(private readonly mainService: MainService) {}
 
-  @Get('sessionInfo')
+  @Get('getSessionInfo')
   async getSessionInfo(
     @Session() session: Record<string, any>,
-  ): Promise<SessionInfoResponseDto> {
+  ): Promise<GetSessionInfoResponseDto> {
     if (!session.uid || !['admin', 'student'].includes(session.type)) {
       session.type = null;
       session.uid = null;
@@ -27,7 +27,7 @@ export class MainController {
     return this.mainService.getSessionInfo(session.type, session.uid);
   }
 
-  @Post('logout')
+  @Get('logout')
   async logout(
     @Session() session: Record<string, any>,
   ): Promise<LogoutResponseDto> {

@@ -1,15 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUsername } from '@/common/validators';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 
-export class LoginRequestDto {
+export class AdminRegisterRequestDto {
   @ApiProperty()
   @IsUsername()
-  @IsNotEmpty()
   readonly username: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @Length(6, 32)
   readonly password: string;
 }

@@ -33,7 +33,7 @@ export class StudentRegisterInfo {
   readonly password: string;
 }
 
-export class AddStudentsRequestDto {
+export class StudentAddStudentsRequestDto {
   @ApiModelProperty({
     isArray: true,
     type: StudentRegisterInfo,

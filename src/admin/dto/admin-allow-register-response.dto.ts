@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export enum AllowRegisterResponseError {
+export enum AdminAllowRegisterResponseError {
   ALREADY_LOGGED = 'ALREADY_LOGGED',
 }
 
-export class AllowRegisterResponseDto {
+export class AdminAllowRegisterResponseDto {
   @ApiProperty()
-  error?: AllowRegisterResponseError;
+  error?: AdminAllowRegisterResponseError;
 
   @ApiProperty()
   allow?: boolean;

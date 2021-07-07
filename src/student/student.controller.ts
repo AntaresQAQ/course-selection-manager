@@ -2,13 +2,16 @@ import { Body, Controller, Post, Session } from '@nestjs/common';
 
 import { StudentService } from './student.service';
 
-import { AddStudentsRequestDto } from './dto/add-students-request.dto';
+import { StudentAddStudentsRequestDto } from './dto/student-add-students-request.dto';
 import {
-  AddStudentsResponseDto,
-  AddStudentsResponseError,
-} from './dto/add-students-response.dto';
-import { LoginRequestDto } from './dto/login-request.dto';
-import { LoginResponseDto, LoginResponseError } from './dto/login-response.dto';
+  StudentAddStudentsResponseDto,
+  StudentAddStudentsResponseError,
+} from './dto/student-add-students-response.dto';
+import { StudentLoginRequestDto } from './dto/student-login-request.dto';
+import {
+  StudentLoginResponseDto,
+  StudentLoginResponseError,
+} from './dto/student-login-response.dto';
 
 @Controller('student')
 export class StudentController {
@@ -17,22 +20,22 @@ export class StudentController {
   @Post('login')
   async login(
     @Session() session: Record<string, any>,
-    @Body() request: LoginRequestDto,
-  ): Promise<LoginResponseDto> {
+    @Body() request: StudentLoginRequestDto,
+  ): Promise<StudentLoginResponseDto> {
     if (session.uid && session.type) {
       return {
-        error: LoginResponseError.ALREADY_LOGGED,
+        error: StudentLoginResponseError.ALREADY_LOGGED,
       };
     }
     const student = await this.studentService.findStudentById(request.id);
     if (!student) {
       return {
-        error: LoginResponseError.ERROR_STUDENT_ID,
+        error: StudentLoginResponseError.ERROR_STUDENT_ID,
       };
     }
     if (!(await this.studentService.checkPassword(student, request.password))) {
       return {
-        error: LoginResponseError.ERROR_PASSWORD,
+        error: StudentLoginResponseError.ERROR_PASSWORD,
       };
     }
     session.uid = student.id;
@@ -59,16 +62,16 @@ export class StudentController {
   @Post('addStudents')
   async addStudents(
     @Session() session: Record<string, any>,
-    @Body() request: AddStudentsRequestDto,
-  ): Promise<AddStudentsResponseDto> {
+    @Body() request: StudentAddStudentsRequestDto,
+  ): Promise<StudentAddStudentsResponseDto> {
     if (!session.uid || !session.type) {
       return {
-        error: AddStudentsResponseError.NOT_LOGGED,
+        error: StudentAddStudentsResponseError.NOT_LOGGED,
       };
     }
     if (session.type !== 'admin') {
       return {
-        error: AddStudentsResponseError.PERMISSION_DENIED,
+        error: StudentAddStudentsResponseError.PERMISSION_DENIED,
       };
     }
 
@@ -76,7 +79,7 @@ export class StudentController {
     request.students.forEach((student) => studentIdSet.add(student.id));
     if (studentIdSet.size !== request.students.length) {
       return {
-        error: AddStudentsResponseError.STUDENTS_CONFLICT,
+        error: StudentAddStudentsResponseError.STUDENTS_CONFLICT,
       };
     }
     const studentsFound = await this.studentService.findStudentsByIds(
@@ -84,7 +87,7 @@ export class StudentController {
     );
     if (studentsFound.length > 0) {
       return {
-        error: AddStudentsResponseError.ID_ALREADY_EXISTS,
+        error: StudentAddStudentsResponseError.ID_ALREADY_EXISTS,
       };
     }
     await this.studentService.registerStudents(request.students);

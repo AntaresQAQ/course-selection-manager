@@ -4,18 +4,24 @@ import { AdminService } from './admin.service';
 import { ConfigService } from '@/config/config.service';
 
 import {
-  AllowRegisterResponseDto,
-  AllowRegisterResponseError,
-} from './dto/allow-register-response.dto';
-import { RegisterRequestDto } from './dto/register-request.dto';
+  AdminAllowRegisterResponseDto,
+  AdminAllowRegisterResponseError,
+} from './dto/admin-allow-register-response.dto';
+import { AdminRegisterRequestDto } from './dto/admin-register-request.dto';
 import {
-  RegisterResponseDto,
-  RegisterResponseError,
-} from './dto/register-response.dto';
-import { LoginRequestDto } from './dto/login-request.dto';
-import { LoginResponseDto, LoginResponseError } from './dto/login-response.dto';
-import { ResetRequestDto } from './dto/reset-request.dto';
-import { ResetResponseDto, ResetResponseError } from './dto/reset-response.dto';
+  AdminRegisterResponseDto,
+  AdminRegisterResponseError,
+} from './dto/admin-register-response.dto';
+import { AdminLoginRequestDto } from './dto/admin-login-request.dto';
+import {
+  AdminLoginResponseDto,
+  AdminLoginResponseError,
+} from './dto/admin-login-response.dto';
+import { AdminResetRequestDto } from './dto/admin-reset-request.dto';
+import {
+  AdminResetResponseDto,
+  AdminResetResponseError,
+} from './dto/admin-reset-response.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -27,10 +33,10 @@ export class AdminController {
   @Get('allowRegister')
   async allowRegister(
     @Session() session: Record<string, any>,
-  ): Promise<AllowRegisterResponseDto> {
+  ): Promise<AdminAllowRegisterResponseDto> {
     if (session.uid || session.type) {
       return {
-        error: AllowRegisterResponseError.ALREADY_LOGGED,
+        error: AdminAllowRegisterResponseError.ALREADY_LOGGED,
       };
     }
     return {
@@ -41,22 +47,22 @@ export class AdminController {
   @Post('login')
   async login(
     @Session() session: Record<string, any>,
-    @Body() request: LoginRequestDto,
-  ): Promise<LoginResponseDto> {
+    @Body() request: AdminLoginRequestDto,
+  ): Promise<AdminLoginResponseDto> {
     if (session.uid || session.type) {
       return {
-        error: LoginResponseError.ALREADY_LOGGED,
+        error: AdminLoginResponseError.ALREADY_LOGGED,
       };
     }
     const admin = await this.adminService.findAdminByUsername(request.username);
     if (!admin) {
       return {
-        error: LoginResponseError.ERROR_USERNAME,
+        error: AdminLoginResponseError.ERROR_USERNAME,
       };
     }
     if (!(await this.adminService.checkPassword(admin, request.password))) {
       return {
-        error: LoginResponseError.ERROR_PASSWORD,
+        error: AdminLoginResponseError.ERROR_PASSWORD,
       };
     }
     session.uid = admin.id;
@@ -75,22 +81,22 @@ export class AdminController {
   @Post('register')
   async register(
     @Session() session: Record<string, any>,
-    @Body() request: RegisterRequestDto,
-  ): Promise<RegisterResponseDto> {
+    @Body() request: AdminRegisterRequestDto,
+  ): Promise<AdminRegisterResponseDto> {
     if (!this.configService.config.environment.allowRegister) {
       return {
-        error: RegisterResponseError.NOT_ALLOW_REGISTER,
+        error: AdminRegisterResponseError.NOT_ALLOW_REGISTER,
       };
     }
     if (session.uid || session.type) {
       return {
-        error: RegisterResponseError.ALREADY_LOGGED,
+        error: AdminRegisterResponseError.ALREADY_LOGGED,
       };
     }
     const { username, password } = request;
     if (!(await this.adminService.checkUsernameAvailability(username))) {
       return {
-        error: RegisterResponseError.USERNAME_ALREADY_USED,
+        error: AdminRegisterResponseError.USERNAME_ALREADY_USED,
       };
     }
     const admin = await this.adminService.register(username, password);
@@ -110,16 +116,16 @@ export class AdminController {
   @Post('reset')
   async reset(
     @Session() session: Record<string, any>,
-    @Body() request: ResetRequestDto,
-  ): Promise<ResetResponseDto> {
+    @Body() request: AdminResetRequestDto,
+  ): Promise<AdminResetResponseDto> {
     if (!session.uid || !session.type) {
       return {
-        error: ResetResponseError.NOT_LOGGED,
+        error: AdminResetResponseError.NOT_LOGGED,
       };
     }
     if (session.type !== 'admin') {
       return {
-        error: ResetResponseError.PERMISSION_DENIED,
+        error: AdminResetResponseError.PERMISSION_DENIED,
       };
     }
     const admin = await this.adminService.findAdminById(session.uid);
@@ -130,7 +136,7 @@ export class AdminController {
       };
     } else {
       return {
-        error: ResetResponseError.ERROR_PASSWORD,
+        error: AdminResetResponseError.ERROR_PASSWORD,
       };
     }
   }

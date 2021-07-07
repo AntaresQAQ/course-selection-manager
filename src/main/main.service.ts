@@ -3,7 +3,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AdminService } from '@/admin/admin.service';
 import { StudentService } from '@/student/student.service';
 
-import { SessionInfoResponseDto } from './dto/session-info-response.dto';
+import { GetSessionInfoResponseDto } from './dto/get-session-info-response.dto';
 import { AdminInfo } from '@/admin/dto/admin-info.dto';
 import { StudentInfo } from '@/student/dto/student-info.dto';
 
@@ -19,7 +19,7 @@ export class MainService {
   async getSessionInfo(
     type: 'admin' | 'student',
     id: number,
-  ): Promise<SessionInfoResponseDto> {
+  ): Promise<GetSessionInfoResponseDto> {
     if (type === 'admin') {
       const admin = await this.adminService.findAdminById(id);
       const info: AdminInfo = admin && {
