@@ -8,5 +8,5 @@ export class StudentRemoveStudentsRequestDto {
   })
   @IsArray()
   @ArrayNotEmpty()
-  ids: number[];
+  readonly ids: number[];
 }
