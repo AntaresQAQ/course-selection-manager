@@ -7,21 +7,51 @@ import {
   AddStudentsResponseDto,
   AddStudentsResponseError,
 } from './dto/add-students-response.dto';
+import { LoginRequestDto } from './dto/login-request.dto';
+import { LoginResponseDto, LoginResponseError } from './dto/login-response.dto';
 
 @Controller('student')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Post('login')
-  async login(@Session() session: Record<string, any>) {
-    if (session.id && session.type) {
-      // ALREADY_LOGGED
+  async login(
+    @Session() session: Record<string, any>,
+    @Body() request: LoginRequestDto,
+  ): Promise<LoginResponseDto> {
+    if (session.uid && session.type) {
+      return {
+        error: LoginResponseError.ALREADY_LOGGED,
+      };
     }
+    const student = await this.studentService.findStudentById(request.id);
+    if (!student) {
+      return {
+        error: LoginResponseError.ERROR_STUDENT_ID,
+      };
+    }
+    if (!(await this.studentService.checkPassword(student, request.password))) {
+      return {
+        error: LoginResponseError.ERROR_PASSWORD,
+      };
+    }
+    session.uid = student.id;
+    session.type = 'student';
+    return {
+      sessionInfo: {
+        type: 'student',
+        info: {
+          id: student.id,
+          name: student.name,
+          major: student.major,
+        },
+      },
+    };
   }
 
   @Post('reset')
   async reset(@Session() session: Record<string, any>) {
-    if (!session.id || !session.type) {
+    if (!session.uid || !session.type) {
       // NOT_LOGGED
     }
   }
@@ -31,7 +61,7 @@ export class StudentController {
     @Session() session: Record<string, any>,
     @Body() request: AddStudentsRequestDto,
   ): Promise<AddStudentsResponseDto> {
-    if (!session.id || !session.type) {
+    if (!session.uid || !session.type) {
       return {
         error: AddStudentsResponseError.NOT_LOGGED,
       };

@@ -6,4 +6,7 @@ export class StudentInfo {
 
   @ApiProperty()
   name: string;
+
+  @ApiProperty()
+  major: string;
 }
