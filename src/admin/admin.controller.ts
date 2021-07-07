@@ -1,27 +1,21 @@
 import { Body, Controller, Get, Post, Session } from '@nestjs/common';
 
-import { AdminService } from '@/admin/admin.service';
+import { AdminService } from './admin.service';
 import { ConfigService } from '@/config/config.service';
 
 import {
   AllowRegisterResponseDto,
   AllowRegisterResponseError,
 } from './dto/allow-register-response.dto';
+import { RegisterRequestDto } from './dto/register-request.dto';
 import {
   RegisterResponseDto,
   RegisterResponseError,
 } from './dto/register-response.dto';
-import { RegisterRequestDto } from './dto/register-request.dto';
-import {
-  LoginResponseDto,
-  LoginResponseError,
-} from '@/admin/dto/login-response.dto';
-import { LoginRequestDto } from '@/admin/dto/login-request.dto';
-import { ResetRequestDto } from '@/admin/dto/reset-request.dto';
-import {
-  ResetResponseDto,
-  ResetResponseError,
-} from '@/admin/dto/reset-response.dto';
+import { LoginRequestDto } from './dto/login-request.dto';
+import { LoginResponseDto, LoginResponseError } from './dto/login-response.dto';
+import { ResetRequestDto } from './dto/reset-request.dto';
+import { ResetResponseDto, ResetResponseError } from './dto/reset-response.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -34,7 +28,7 @@ export class AdminController {
   async allowRegister(
     @Session() session: Record<string, any>,
   ): Promise<AllowRegisterResponseDto> {
-    if (session.sid || session.type) {
+    if (session.uid || session.type) {
       return {
         error: AllowRegisterResponseError.ALREADY_LOGGED,
       };
@@ -49,7 +43,7 @@ export class AdminController {
     @Session() session: Record<string, any>,
     @Body() request: LoginRequestDto,
   ): Promise<LoginResponseDto> {
-    if (session.sid || session.type) {
+    if (session.uid || session.type) {
       return {
         error: LoginResponseError.ALREADY_LOGGED,
       };
@@ -65,7 +59,7 @@ export class AdminController {
         error: LoginResponseError.ERROR_PASSWORD,
       };
     }
-    session.sid = admin.id;
+    session.uid = admin.id;
     session.type = 'admin';
     return {
       sessionInfo: {
@@ -88,7 +82,7 @@ export class AdminController {
         error: RegisterResponseError.NOT_ALLOW_REGISTER,
       };
     }
-    if (session.sid || session.type) {
+    if (session.uid || session.type) {
       return {
         error: RegisterResponseError.ALREADY_LOGGED,
       };
@@ -101,7 +95,7 @@ export class AdminController {
     }
     const admin = await this.adminService.register(username, password);
     session.type = 'admin';
-    session.sid = admin.id;
+    session.uid = admin.id;
     return {
       sessionInfo: {
         type: session.type,
@@ -118,7 +112,7 @@ export class AdminController {
     @Session() session: Record<string, any>,
     @Body() request: ResetRequestDto,
   ): Promise<ResetResponseDto> {
-    if (!session.sid || !session.type) {
+    if (!session.uid || !session.type) {
       return {
         error: ResetResponseError.NOT_LOGGED,
       };
@@ -128,7 +122,7 @@ export class AdminController {
         error: ResetResponseError.PERMISSION_DENIED,
       };
     }
-    const admin = await this.adminService.findAdminById(session.sid);
+    const admin = await this.adminService.findAdminById(session.uid);
     if (await this.adminService.checkPassword(admin, request.currentPassword)) {
       await this.adminService.changePassword(admin, request.newPassword);
       return {

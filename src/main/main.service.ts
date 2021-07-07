@@ -3,7 +3,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AdminService } from '@/admin/admin.service';
 import { StudentService } from '@/student/student.service';
 
-import { SessionInfoResponseDto } from '@/main/dto/session-info-response.dto';
+import { SessionInfoResponseDto } from './dto/session-info-response.dto';
 import { AdminInfo } from '@/admin/dto/admin-info.dto';
 import { StudentInfo } from '@/student/dto/student-info.dto';
 
@@ -32,6 +32,7 @@ export class MainService {
       const info: StudentInfo = student && {
         id: student.id,
         name: student.name,
+        major: student.major,
       };
       return { type, info };
     }
