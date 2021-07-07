@@ -123,6 +123,11 @@ export class AdminController {
         error: ResetResponseError.NOT_LOGGED,
       };
     }
+    if (session.type !== 'admin') {
+      return {
+        error: ResetResponseError.PERMISSION_DENIED,
+      };
+    }
     const admin = await this.adminService.findAdminById(session.sid);
     if (await this.adminService.checkPassword(admin, request.currentPassword)) {
       await this.adminService.changePassword(admin, request.newPassword);
