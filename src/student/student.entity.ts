@@ -1,4 +1,11 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  PrimaryColumn,
+} from 'typeorm';
 import { CourseEntity } from '@/course/course.entity';
 import { SelectionEntity } from '@/selection/selection.entity';
 
@@ -7,11 +14,15 @@ export class StudentEntity {
   @PrimaryColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 30 })
   name: string;
 
   @Column({ type: 'char', length: 60 })
   password: string;
+
+  @Column({ type: 'varchar', length: 30 })
+  @Index({ unique: false })
+  major: string;
 
   @ManyToMany(() => SelectionEntity, (selection) => selection.students)
   @JoinTable()
