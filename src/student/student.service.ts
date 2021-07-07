@@ -58,4 +58,12 @@ export class StudentService {
   async deleteStudents(ids: number[]): Promise<void> {
     await this.studentRepository.delete(ids);
   }
+
+  async changePassword(
+    student: StudentEntity,
+    password: string,
+  ): Promise<void> {
+    student.password = await StudentService.hashPassword(password);
+    await this.studentRepository.save(student);
+  }
 }
