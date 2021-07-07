@@ -74,18 +74,22 @@ export class StudentController {
     if (!student) {
       return { error: StudentResetResponseError.ERROR_STUDENT_ID };
     }
+    if (session.type === 'admin') {
+      await this.studentService.changePassword(student, request.newPassword);
+      return { result: 'SUCCEED' };
+    }
     if (
-      session.type !== 'admin' &&
-      (!request.currentPassword ||
-        !(await this.studentService.checkPassword(
-          student,
-          request.currentPassword,
-        )))
+      request.currentPassword &&
+      (await this.studentService.checkPassword(
+        student,
+        request.currentPassword,
+      ))
     ) {
+      await this.studentService.changePassword(student, request.newPassword);
+      return { result: 'SUCCEED' };
+    } else {
       return { error: StudentResetResponseError.ERROR_PASSWORD };
     }
-    await this.studentService.changePassword(student, request.newPassword);
-    return { result: 'SUCCEED' };
   }
 
   @Post('addStudents')

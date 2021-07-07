@@ -29,13 +29,9 @@ export class AdminController {
     @Session() session: Record<string, any>,
   ): Promise<AdminAllowRegisterResponseDto> {
     if (session.uid || session.type) {
-      return {
-        error: AdminAllowRegisterResponseError.ALREADY_LOGGED,
-      };
+      return { error: AdminAllowRegisterResponseError.ALREADY_LOGGED };
     }
-    return {
-      allow: this.configService.config.environment.allowRegister,
-    };
+    return { allow: this.configService.config.environment.allowRegister };
   }
 
   @Post('login')
@@ -44,20 +40,14 @@ export class AdminController {
     @Body() request: AdminLoginRequestDto,
   ): Promise<AdminLoginResponseDto> {
     if (session.uid || session.type) {
-      return {
-        error: AdminLoginResponseError.ALREADY_LOGGED,
-      };
+      return { error: AdminLoginResponseError.ALREADY_LOGGED };
     }
     const admin = await this.adminService.findAdminByUsername(request.username);
     if (!admin) {
-      return {
-        error: AdminLoginResponseError.ERROR_USERNAME,
-      };
+      return { error: AdminLoginResponseError.ERROR_USERNAME };
     }
     if (!(await this.adminService.checkPassword(admin, request.password))) {
-      return {
-        error: AdminLoginResponseError.ERROR_PASSWORD,
-      };
+      return { error: AdminLoginResponseError.ERROR_PASSWORD };
     }
     session.uid = admin.id;
     session.type = 'admin';
@@ -78,20 +68,14 @@ export class AdminController {
     @Body() request: AdminRegisterRequestDto,
   ): Promise<AdminRegisterResponseDto> {
     if (!this.configService.config.environment.allowRegister) {
-      return {
-        error: AdminRegisterResponseError.NOT_ALLOW_REGISTER,
-      };
+      return { error: AdminRegisterResponseError.NOT_ALLOW_REGISTER };
     }
     if (session.uid || session.type) {
-      return {
-        error: AdminRegisterResponseError.ALREADY_LOGGED,
-      };
+      return { error: AdminRegisterResponseError.ALREADY_LOGGED };
     }
     const { username, password } = request;
     if (!(await this.adminService.checkUsernameAvailability(username))) {
-      return {
-        error: AdminRegisterResponseError.USERNAME_ALREADY_USED,
-      };
+      return { error: AdminRegisterResponseError.USERNAME_ALREADY_USED };
     }
     const admin = await this.adminService.register(username, password);
     session.type = 'admin';
@@ -113,25 +97,17 @@ export class AdminController {
     @Body() request: AdminResetRequestDto,
   ): Promise<AdminResetResponseDto> {
     if (!session.uid || !session.type) {
-      return {
-        error: AdminResetResponseError.NOT_LOGGED,
-      };
+      return { error: AdminResetResponseError.NOT_LOGGED };
     }
     if (session.type !== 'admin') {
-      return {
-        error: AdminResetResponseError.PERMISSION_DENIED,
-      };
+      return { error: AdminResetResponseError.PERMISSION_DENIED };
     }
     const admin = await this.adminService.findAdminById(session.uid);
     if (await this.adminService.checkPassword(admin, request.currentPassword)) {
       await this.adminService.changePassword(admin, request.newPassword);
-      return {
-        result: 'SUCCEED',
-      };
+      return { result: 'SUCCEED' };
     } else {
-      return {
-        error: AdminResetResponseError.ERROR_PASSWORD,
-      };
+      return { error: AdminResetResponseError.ERROR_PASSWORD };
     }
   }
 }
