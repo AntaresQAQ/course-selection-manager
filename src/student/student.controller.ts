@@ -2,8 +2,8 @@ import { Body, Controller, Post, Session } from '@nestjs/common';
 
 import { StudentService } from './student.service';
 
-import { StudentAddStudentsRequestDto } from './dto';
 import {
+  StudentAddStudentsRequestDto,
   StudentAddStudentsResponseDto,
   StudentAddStudentsResponseError,
   StudentLoginRequestDto,
