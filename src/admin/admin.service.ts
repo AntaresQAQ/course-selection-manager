@@ -41,4 +41,9 @@ export class AdminService {
     await this.adminRepository.save(admin);
     return admin;
   }
+
+  async changePassword(admin: AdminEntity, password: string): Promise<void> {
+    admin.password = await AdminService.hashPassword(password);
+    await this.adminRepository.save(admin);
+  }
 }

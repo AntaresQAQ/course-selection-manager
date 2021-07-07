@@ -17,6 +17,11 @@ import {
   LoginResponseError,
 } from '@/admin/dto/login-response.dto';
 import { LoginRequestDto } from '@/admin/dto/login-request.dto';
+import { ResetRequestDto } from '@/admin/dto/reset-request.dto';
+import {
+  ResetResponseDto,
+  ResetResponseError,
+} from '@/admin/dto/reset-response.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -109,5 +114,25 @@ export class AdminController {
   }
 
   @Post('reset')
-  async reset() {}
+  async reset(
+    @Session() session: Record<string, any>,
+    @Body() request: ResetRequestDto,
+  ): Promise<ResetResponseDto> {
+    if (!session.sid || !session.type) {
+      return {
+        error: ResetResponseError.NOT_LOGGED,
+      };
+    }
+    const admin = await this.adminService.findAdminById(session.sid);
+    if (await this.adminService.checkPassword(admin, request.currentPassword)) {
+      await this.adminService.changePassword(admin, request.newPassword);
+      return {
+        result: 'SUCCEED',
+      };
+    } else {
+      return {
+        error: ResetResponseError.ERROR_PASSWORD,
+      };
+    }
+  }
 }
