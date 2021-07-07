@@ -4,7 +4,7 @@ import { Connection, Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 
 import { StudentEntity } from './student.entity';
-import { StudentRegisterInfoDto } from './dto/student-add-students-request.dto';
+import { StudentRegisterInfoDto } from './dto';
 
 @Injectable()
 export class StudentService {

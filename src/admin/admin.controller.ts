@@ -6,22 +6,16 @@ import { ConfigService } from '@/config/config.service';
 import {
   AdminAllowRegisterResponseDto,
   AdminAllowRegisterResponseError,
-} from './dto/admin-allow-register-response.dto';
-import { AdminRegisterRequestDto } from './dto/admin-register-request.dto';
-import {
-  AdminRegisterResponseDto,
-  AdminRegisterResponseError,
-} from './dto/admin-register-response.dto';
-import { AdminLoginRequestDto } from './dto/admin-login-request.dto';
-import {
+  AdminLoginRequestDto,
   AdminLoginResponseDto,
   AdminLoginResponseError,
-} from './dto/admin-login-response.dto';
-import { AdminResetRequestDto } from './dto/admin-reset-request.dto';
-import {
+  AdminRegisterRequestDto,
+  AdminRegisterResponseDto,
+  AdminRegisterResponseError,
+  AdminResetRequestDto,
   AdminResetResponseDto,
   AdminResetResponseError,
-} from './dto/admin-reset-response.dto';
+} from './dto';
 
 @Controller('admin')
 export class AdminController {

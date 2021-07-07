@@ -2,26 +2,20 @@ import { Body, Controller, Post, Session } from '@nestjs/common';
 
 import { StudentService } from './student.service';
 
-import { StudentAddStudentsRequestDto } from './dto/student-add-students-request.dto';
+import { StudentAddStudentsRequestDto } from './dto';
 import {
   StudentAddStudentsResponseDto,
   StudentAddStudentsResponseError,
-} from './dto/student-add-students-response.dto';
-import { StudentLoginRequestDto } from './dto/student-login-request.dto';
-import {
+  StudentLoginRequestDto,
   StudentLoginResponseDto,
   StudentLoginResponseError,
-} from './dto/student-login-response.dto';
-import { StudentRemoveStudentsRequestDto } from './dto/student-remove-students-request.dto';
-import {
+  StudentRemoveStudentsRequestDto,
   StudentRemoveStudentsResponseDto,
   StudentRemoveStudentsResponseError,
-} from './dto/student-remove-students-response.dto';
-import { StudentResetRequestDto } from './dto/student-reset-request.dto';
-import {
+  StudentResetRequestDto,
   StudentResetResponseDto,
   StudentResetResponseError,
-} from './dto/student-reset-response.dto';
+} from './dto';
 
 @Controller('student')
 export class StudentController {
