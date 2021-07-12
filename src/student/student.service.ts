@@ -47,6 +47,8 @@ export class StudentService {
           entity.name = student.name;
           entity.major = student.major;
           entity.password = await StudentService.hashPassword(student.password);
+          entity.courses = [];
+          entity.selections = [];
           await entityManager.save(entity);
           studentsEntity.push(entity);
         }
