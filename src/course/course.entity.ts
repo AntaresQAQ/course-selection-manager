@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -14,13 +15,14 @@ export class CourseEntity {
   id: number;
 
   @Column({ type: 'varchar', length: 30 })
+  @Index({ unique: false })
   name: string;
 
   @Column({ type: 'varchar', length: 20 })
   teacher: string;
 
   @Column({ type: 'integer' })
-  student_limit: number;
+  studentsLimit: number;
 
   @ManyToOne(() => SelectionEntity, (selection) => selection.courses)
   selection: Promise<SelectionEntity>;
