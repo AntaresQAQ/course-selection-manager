@@ -2,7 +2,7 @@ import { Controller, Get, Session } from '@nestjs/common';
 
 import { MainService } from './main.service';
 
-import { GetSessionInfoResponseDto } from './dto/get-session-info-response.dto';
+import { GetSessionInfoResponseDto } from './dto';
 import {
   LogoutResponseDto,
   LogoutResponseError,
