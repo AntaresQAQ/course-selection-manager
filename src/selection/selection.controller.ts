@@ -8,6 +8,9 @@ import {
   AddSelectionRequestDto,
   AddSelectionResponseDto,
   AddSelectionResponseError,
+  RemoveSelectionRequestDto,
+  RemoveSelectionResponseDto,
+  RemoveSelectionResponseError,
 } from './dto';
 import { StudentInfo } from '@/student/dto';
 
@@ -41,6 +44,7 @@ export class SelectionController {
     return {
       result: 'SUCCEED',
       selection: {
+        id: selection.id,
         name: selection.name,
         students: students.map(
           (student: StudentEntity): StudentInfo => ({
@@ -54,7 +58,19 @@ export class SelectionController {
   }
 
   @Post('removeSelection')
-  async removeSelection() {}
+  async removeSelection(
+    @Session() session: Record<string, any>,
+    @Body() request: RemoveSelectionRequestDto,
+  ): Promise<RemoveSelectionResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: RemoveSelectionResponseError.NOT_LOGGED };
+    }
+    if (session.type !== 'admin') {
+      return { error: RemoveSelectionResponseError.PERMISSION_DENIED };
+    }
+    await this.selectionService.removeSelection(request.selectionId);
+    return { result: 'SUCCEED' };
+  }
 
   @Post('addStudents')
   async addStudents() {}

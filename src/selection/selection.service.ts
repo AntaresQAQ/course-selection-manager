@@ -4,6 +4,7 @@ import { Connection, Repository } from 'typeorm';
 
 import { SelectionEntity } from './selection.entity';
 import { StudentEntity } from '@/student/student.entity';
+import { CourseEntity } from '@/course/course.entity';
 
 @Injectable()
 export class SelectionService {
@@ -14,6 +15,8 @@ export class SelectionService {
     private readonly selectionRepository: Repository<SelectionEntity>,
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
+    @InjectRepository(CourseEntity)
+    private readonly courseRepository: Repository<CourseEntity>,
   ) {}
 
   async addSelection(
@@ -23,7 +26,25 @@ export class SelectionService {
     const selection = this.selectionRepository.create();
     selection.name = name;
     selection.students = students;
+    selection.course = [];
     await this.selectionRepository.save(selection);
     return selection;
+  }
+
+  async removeSelection(id: number): Promise<void> {
+    await this.connection.transaction(
+      'READ COMMITTED',
+      async (entityManager) => {
+        const selection: SelectionEntity = await entityManager.findOne(
+          SelectionEntity,
+          id,
+          { relations: ['students'] },
+        );
+        if (selection) {
+          // await entityManager.delete(CourseEntity, { selection });
+          await entityManager.remove(selection);
+        }
+      },
+    );
   }
 }
