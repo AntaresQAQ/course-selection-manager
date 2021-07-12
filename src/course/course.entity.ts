@@ -24,9 +24,11 @@ export class CourseEntity {
   @Column({ type: 'integer' })
   studentsLimit: number;
 
-  @ManyToOne(() => SelectionEntity, (selection) => selection.courses)
-  selection: Promise<SelectionEntity>;
+  @ManyToOne(() => SelectionEntity, (selection) => selection.course)
+  selection: SelectionEntity;
 
-  @ManyToMany(() => StudentEntity, (student) => student)
-  students: Promise<StudentEntity[]>;
+  @ManyToMany(() => StudentEntity, (student) => student.courses, {
+    cascade: true,
+  })
+  students: StudentEntity[];
 }

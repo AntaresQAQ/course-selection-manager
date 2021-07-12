@@ -24,11 +24,15 @@ export class StudentEntity {
   @Index({ unique: false })
   major: string;
 
-  @ManyToMany(() => SelectionEntity, (selection) => selection.students)
+  @ManyToMany(() => SelectionEntity, (selection) => selection.students, {
+    cascade: true,
+  })
   @JoinTable()
-  selections: Promise<SelectionEntity[]>;
+  selections: SelectionEntity[];
 
-  @ManyToMany(() => CourseEntity, (course) => course.students)
+  @ManyToMany(() => CourseEntity, (course) => course.students, {
+    cascade: true,
+  })
   @JoinTable()
-  courses: Promise<CourseEntity[]>;
+  courses: CourseEntity[];
 }

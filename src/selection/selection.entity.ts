@@ -18,9 +18,13 @@ export class SelectionEntity {
   @Index({ unique: false })
   name: string;
 
-  @ManyToMany(() => StudentEntity, (student) => student.selections)
-  students: StudentEntity[];
+  @OneToMany(() => CourseEntity, (course) => course.selection, {
+    cascade: true,
+  })
+  course: CourseEntity[];
 
-  @OneToMany(() => CourseEntity, (course) => course.selection)
-  courses: CourseEntity[];
+  @ManyToMany(() => StudentEntity, (student) => student.selections, {
+    cascade: true,
+  })
+  students: StudentEntity[];
 }
