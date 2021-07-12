@@ -3,6 +3,9 @@ import { StudentInfo } from '@/student/dto';
 
 export class SelectionInfoDto {
   @ApiProperty()
+  id: number;
+
+  @ApiProperty()
   name: string;
 
   @ApiProperty({
