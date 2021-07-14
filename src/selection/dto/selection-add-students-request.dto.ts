@@ -4,9 +4,9 @@ import { IsArray, IsNumber } from 'class-validator';
 export class SelectionAddStudentsRequestDto {
   @ApiProperty()
   @IsNumber()
-  selectionId: number;
+  readonly selectionId: number;
 
   @ApiProperty({ isArray: true, type: Number })
   @IsArray()
-  studentIds: number[];
+  readonly studentIds: number[];
 }

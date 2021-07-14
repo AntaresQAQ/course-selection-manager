@@ -12,6 +12,9 @@ import {
   SelectionAddStudentsRequestDto,
   SelectionAddStudentsResponseDto,
   SelectionAddStudentsResponseError,
+  SelectionGetInfoRequestDto,
+  SelectionGetInfoResponseDto,
+  SelectionGetInfoResponseError,
   SelectionRemoveSelectionRequestDto,
   SelectionRemoveSelectionResponseDto,
   SelectionRemoveSelectionResponseError,
@@ -25,6 +28,55 @@ export class SelectionController {
     private readonly selectionService: SelectionService,
     private readonly studentService: StudentService,
   ) {}
+
+  @ApiOperation({
+    summary: 'A request to get selection information',
+    description: 'Only Admin can get students in selection',
+  })
+  @Post('getInfo')
+  async getInfo(
+    @Session() session: Record<string, any>,
+    @Body() request: SelectionGetInfoRequestDto,
+  ): Promise<SelectionGetInfoResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: SelectionGetInfoResponseError.NOT_LOGGED };
+    }
+    const selection = await this.selectionService.findSelectionById(
+      request.id,
+      true,
+    );
+    if (!selection) {
+      return { error: SelectionGetInfoResponseError.SELECTION_ID_NOT_EXISTS };
+    }
+    const flag =
+      session.type !== 'admin' &&
+      !selection.students.map((student) => student.id).includes(session.uid);
+    if (flag) {
+      return { error: SelectionGetInfoResponseError.PERMISSION_DENIED };
+    }
+    if (session.type === 'admin') {
+      return {
+        info: {
+          id: selection.id,
+          name: selection.name,
+          students: selection.students.map(
+            (student: StudentEntity): StudentInfo => ({
+              id: student.id,
+              name: student.name,
+              major: student.major,
+            }),
+          ),
+        },
+      };
+    } else {
+      return {
+        info: {
+          id: selection.id,
+          name: selection.name,
+        },
+      };
+    }
+  }
 
   @ApiOperation({
     summary: 'A request to add selection for student accounts',

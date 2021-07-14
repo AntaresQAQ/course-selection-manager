@@ -26,12 +26,22 @@ export class StudentService {
     return await bcrypt.compare(password, student.password);
   }
 
-  async findStudentById(id: number): Promise<StudentEntity> {
-    return await this.studentRepository.findOne(id);
+  async findStudentById(
+    id: number,
+    loadRelation = false,
+  ): Promise<StudentEntity> {
+    return await this.studentRepository.findOne(id, {
+      relations: loadRelation ? ['selections', 'courses'] : [],
+    });
   }
 
-  async findStudentsByIds(ids: number[]): Promise<StudentEntity[]> {
-    return await this.studentRepository.findByIds(ids);
+  async findStudentsByIds(
+    ids: number[],
+    loadRelation = false,
+  ): Promise<StudentEntity[]> {
+    return await this.studentRepository.findByIds(ids, {
+      relations: loadRelation ? ['selections', 'courses'] : [],
+    });
   }
 
   async registerStudents(

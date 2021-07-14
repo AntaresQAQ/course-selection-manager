@@ -1,5 +1,8 @@
 export * from './selection-info.dto';
 
+export * from './selection-get-info-request.dto';
+export * from './selection-get-info-response.dto';
+
 export * from './selection-add-selection-request.dto';
 export * from './selection-add-selection-response.dto';
 
