@@ -16,7 +16,7 @@ export class MainController {
 
   @Get('getSessionInfo')
   @ApiOperation({
-    summary: "A JSON request to get current user's session info",
+    summary: "A request to get current user's session info",
     description: "Don't need login session",
   })
   async getSessionInfo(
