@@ -4,6 +4,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SelectionService } from './selection.service';
 import { StudentService } from '@/student/student.service';
 import { StudentEntity } from '@/student/student.entity';
+import { CourseEntity } from '@/course/course.entity';
 
 import {
   SelectionAddSelectionRequestDto,
@@ -15,11 +16,19 @@ import {
   SelectionGetInfoRequestDto,
   SelectionGetInfoResponseDto,
   SelectionGetInfoResponseError,
+  SelectionInfoDto,
   SelectionRemoveSelectionRequestDto,
   SelectionRemoveSelectionResponseDto,
   SelectionRemoveSelectionResponseError,
 } from './dto';
 import { StudentInfo } from '@/student/dto';
+import { CourseInfoDto } from '@/course/dto';
+import { SelectionGetListRequestDto } from '@/selection/dto/selection-get-list-request.dto';
+import {
+  SelectionGetListResponseDto,
+  SelectionGetListResponseError,
+} from '@/selection/dto/selection-get-list-response.dto';
+import { SelectionEntity } from '@/selection/selection.entity';
 
 @ApiTags('Selection')
 @Controller('selection')
@@ -28,6 +37,66 @@ export class SelectionController {
     private readonly selectionService: SelectionService,
     private readonly studentService: StudentService,
   ) {}
+
+  @ApiOperation({
+    summary: 'A request to get selections list',
+    description:
+      'Can only get selections which the current student has except admin',
+  })
+  @Post('getList')
+  async getList(
+    @Session() session: Record<string, any>,
+    @Body() request: SelectionGetListRequestDto,
+  ): Promise<SelectionGetListResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: SelectionGetListResponseError.NOT_LOGGED };
+    }
+
+    if (session.type === 'admin') {
+      if (!request.studentId) {
+        return { error: SelectionGetListResponseError.STUDENT_ID_NOT_EXISTS };
+      }
+
+      const student = await this.studentService.findStudentById(
+        request.studentId,
+        true,
+      );
+      if (!student) {
+        return { error: SelectionGetListResponseError.STUDENT_ID_NOT_EXISTS };
+      }
+
+      return {
+        selections: student.selections.map(
+          (selection: SelectionEntity): SelectionInfoDto => ({
+            id: selection.id,
+            name: selection.name,
+          }),
+        ),
+      };
+    } else {
+      const studentId = request.studentId || session.uid;
+      if (studentId !== session.uid) {
+        return { error: SelectionGetListResponseError.PERMISSION_DENIED };
+      }
+
+      const student = await this.studentService.findStudentById(
+        studentId,
+        true,
+      );
+      if (!student) {
+        return { error: SelectionGetListResponseError.STUDENT_ID_NOT_EXISTS };
+      }
+
+      return {
+        selections: student.selections.map(
+          (selection: SelectionEntity): SelectionInfoDto => ({
+            id: selection.id,
+            name: selection.name,
+          }),
+        ),
+      };
+    }
+  }
 
   @ApiOperation({
     summary: 'A request to get selection information',
@@ -54,28 +123,31 @@ export class SelectionController {
     if (flag) {
       return { error: SelectionGetInfoResponseError.PERMISSION_DENIED };
     }
-    if (session.type === 'admin') {
-      return {
-        info: {
-          id: selection.id,
-          name: selection.name,
-          students: selection.students.map(
-            (student: StudentEntity): StudentInfo => ({
-              id: student.id,
-              name: student.name,
-              major: student.major,
-            }),
-          ),
-        },
-      };
-    } else {
-      return {
-        info: {
-          id: selection.id,
-          name: selection.name,
-        },
-      };
-    }
+    return {
+      info: {
+        id: selection.id,
+        name: selection.name,
+        courses: selection.courses.map(
+          (course: CourseEntity): CourseInfoDto => ({
+            id: course.id,
+            name: course.name,
+            teacher: course.teacher,
+            currentStudent: course.currentStudent,
+            studentsLimit: course.studentsLimit,
+          }),
+        ),
+        students:
+          session.type === 'admin'
+            ? selection.students.map(
+                (student: StudentEntity): StudentInfo => ({
+                  id: student.id,
+                  name: student.name,
+                  major: student.major,
+                }),
+              )
+            : undefined,
+      },
+    };
   }
 
   @ApiOperation({
