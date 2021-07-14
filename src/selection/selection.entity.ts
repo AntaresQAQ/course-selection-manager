@@ -21,7 +21,7 @@ export class SelectionEntity {
   @OneToMany(() => CourseEntity, (course) => course.selection, {
     cascade: true,
   })
-  course: CourseEntity[];
+  courses: CourseEntity[];
 
   @ManyToMany(() => StudentEntity, (student) => student.selections, {
     cascade: true,

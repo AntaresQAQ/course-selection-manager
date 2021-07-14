@@ -24,7 +24,7 @@ export class CourseEntity {
   @Column({ type: 'integer' })
   studentsLimit: number;
 
-  @ManyToOne(() => SelectionEntity, (selection) => selection.course)
+  @ManyToOne(() => SelectionEntity, (selection) => selection.courses)
   selection: SelectionEntity;
 
   @ManyToMany(() => StudentEntity, (student) => student.courses, {
