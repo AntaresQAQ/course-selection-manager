@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayNotEmpty, IsArray, IsString, Length } from 'class-validator';
 
-export class AddSelectionRequestDto {
+export class SelectionAddSelectionRequestDto {
   @ApiProperty()
   @IsString()
   @Length(1, 30)
