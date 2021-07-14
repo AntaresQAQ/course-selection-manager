@@ -1,7 +1,8 @@
 import { Body, Controller, Post, Session } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { SelectionService } from './selection.service';
 import { StudentService } from '@/student/student.service';
-
 import { StudentEntity } from '@/student/student.entity';
 
 import {
@@ -14,6 +15,7 @@ import {
 } from './dto';
 import { StudentInfo } from '@/student/dto';
 
+@ApiTags('Selection')
 @Controller('selection')
 export class SelectionController {
   constructor(
@@ -21,6 +23,10 @@ export class SelectionController {
     private readonly studentService: StudentService,
   ) {}
 
+  @ApiOperation({
+    summary: 'A request to add selection for student accounts',
+    description: 'Admin only',
+  })
   @Post('addSelection')
   async addSelection(
     @Session() session: Record<string, any>,
@@ -57,6 +63,10 @@ export class SelectionController {
     };
   }
 
+  @ApiOperation({
+    summary: 'A request to remove selections',
+    description: 'Admin only',
+  })
   @Post('removeSelection')
   async removeSelection(
     @Session() session: Record<string, any>,

@@ -1,4 +1,5 @@
 import { Body, Controller, Post, Session } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { StudentService } from './student.service';
 
@@ -17,10 +18,14 @@ import {
   StudentResetResponseError,
 } from './dto';
 
+@ApiTags('Student')
 @Controller('student')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
+  @ApiOperation({
+    summary: 'A request to login a student account',
+  })
   @Post('login')
   async login(
     @Session() session: Record<string, any>,
@@ -50,6 +55,10 @@ export class StudentController {
     };
   }
 
+  @ApiOperation({
+    summary: 'A request to reset password for a student account',
+    description: 'Can only change current account except the admin account',
+  })
   @Post('reset')
   async reset(
     @Session() session: Record<string, any>,
@@ -92,6 +101,10 @@ export class StudentController {
     }
   }
 
+  @ApiOperation({
+    summary: 'A request to add some student accounts',
+    description: 'Admin only',
+  })
   @Post('addStudents')
   async addStudents(
     @Session() session: Record<string, any>,
@@ -119,6 +132,10 @@ export class StudentController {
     return { result: 'SUCCEED' };
   }
 
+  @ApiOperation({
+    summary: 'A request to remove some student accounts',
+    description: 'Admin only',
+  })
   @Post('removeStudents')
   async removeStudents(
     @Session() session: Record<string, any>,

@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Session } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AdminService } from './admin.service';
 import { ConfigService } from '@/config/config.service';
@@ -17,6 +18,7 @@ import {
   AdminResetResponseError,
 } from './dto';
 
+@ApiTags('Admin')
 @Controller('admin')
 export class AdminController {
   constructor(
@@ -24,6 +26,9 @@ export class AdminController {
     private readonly configService: ConfigService,
   ) {}
 
+  @ApiOperation({
+    summary: 'A request to check if the server allow register',
+  })
   @Get('allowRegister')
   async allowRegister(
     @Session() session: Record<string, any>,
@@ -34,6 +39,9 @@ export class AdminController {
     return { allow: this.configService.config.environment.allowRegister };
   }
 
+  @ApiOperation({
+    summary: 'A request to login a admin account',
+  })
   @Post('login')
   async login(
     @Session() session: Record<string, any>,
@@ -62,6 +70,9 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({
+    summary: 'A request to register new admin account',
+  })
   @Post('register')
   async register(
     @Session() session: Record<string, any>,
@@ -91,6 +102,9 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({
+    summary: 'A request to reset password for an admin account',
+  })
   @Post('reset')
   async reset(
     @Session() session: Record<string, any>,

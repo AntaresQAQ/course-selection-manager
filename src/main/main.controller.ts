@@ -1,4 +1,5 @@
 import { Controller, Get, Session } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { MainService } from './main.service';
 
@@ -8,11 +9,16 @@ import {
   LogoutResponseError,
 } from './dto/logout-response.dto';
 
+@ApiTags('Main')
 @Controller()
 export class MainController {
   constructor(private readonly mainService: MainService) {}
 
   @Get('getSessionInfo')
+  @ApiOperation({
+    summary: "A JSON request to get current user's session info",
+    description: "Don't need login session",
+  })
   async getSessionInfo(
     @Session() session: Record<string, any>,
   ): Promise<GetSessionInfoResponseDto> {
@@ -28,6 +34,10 @@ export class MainController {
   }
 
   @Get('logout')
+  @ApiOperation({
+    summary: 'A request to logout account',
+    description: 'Must logged in',
+  })
   async logout(
     @Session() session: Record<string, any>,
   ): Promise<LogoutResponseDto> {
