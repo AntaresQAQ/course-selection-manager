@@ -11,10 +11,7 @@ import ConnectRedis from 'connect-redis';
 import { AppModule } from './app.module';
 import { ConfigService } from './config/config.service';
 
-async function initialize(): Promise<
-  [configService: ConfigService, app: NestExpressApplication]
-> {
-  // create nest express application
+async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     ...(process.env.NODE_ENV === 'production'
       ? { logger: ['warn', 'error'] }
@@ -31,7 +28,6 @@ async function initialize(): Promise<
   );
   app.use(json({ limit: '1024mb' }));
 
-  // use express-session
   const redisStore = ConnectRedis(session);
   app.use(
     session({
@@ -44,18 +40,12 @@ async function initialize(): Promise<
     }),
   );
 
-  // use swagger
   const options = new DocumentBuilder()
     .setTitle('course-selection-manager')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('/docs', app, document);
 
-  return [configService, app];
-}
-
-async function bootstrap() {
-  const [configService, app] = await initialize();
   await app.listen(
     configService.config.server.port,
     configService.config.server.hostname,
