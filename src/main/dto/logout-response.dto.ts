@@ -5,7 +5,7 @@ export enum LogoutResponseError {
 }
 
 export class LogoutResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: LogoutResponseError })
   error?: LogoutResponseError;
 
   @ApiProperty()

@@ -6,7 +6,7 @@ export enum RemoveSelectionResponseError {
 }
 
 export class RemoveSelectionResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: RemoveSelectionResponseError })
   error?: RemoveSelectionResponseError;
 
   @ApiProperty()

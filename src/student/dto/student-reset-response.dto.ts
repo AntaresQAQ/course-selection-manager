@@ -8,7 +8,7 @@ export enum StudentResetResponseError {
 }
 
 export class StudentResetResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: StudentResetResponseError })
   error?: StudentResetResponseError;
 
   @ApiProperty()

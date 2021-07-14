@@ -8,9 +8,9 @@ export enum StudentLoginResponseError {
 }
 
 export class StudentLoginResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: StudentLoginResponseError })
   error?: StudentLoginResponseError;
 
-  @ApiProperty()
+  @ApiProperty({ type: GetSessionInfoResponseDto })
   sessionInfo?: GetSessionInfoResponseDto;
 }

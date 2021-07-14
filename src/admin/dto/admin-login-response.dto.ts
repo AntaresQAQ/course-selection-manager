@@ -8,7 +8,7 @@ export enum AdminLoginResponseError {
 }
 
 export class AdminLoginResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: AdminLoginResponseError })
   error?: AdminLoginResponseError;
 
   @ApiProperty()

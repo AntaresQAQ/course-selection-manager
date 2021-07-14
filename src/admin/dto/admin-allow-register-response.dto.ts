@@ -5,7 +5,7 @@ export enum AdminAllowRegisterResponseError {
 }
 
 export class AdminAllowRegisterResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: AdminAllowRegisterResponseError })
   error?: AdminAllowRegisterResponseError;
 
   @ApiProperty()

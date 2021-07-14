@@ -8,12 +8,12 @@ export enum AddSelectionResponseError {
 }
 
 export class AddSelectionResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: AddSelectionResponseError })
   error?: AddSelectionResponseError;
 
   @ApiProperty()
   result?: 'SUCCEED';
 
-  @ApiProperty()
+  @ApiProperty({ type: SelectionInfoDto })
   selection?: SelectionInfoDto;
 }

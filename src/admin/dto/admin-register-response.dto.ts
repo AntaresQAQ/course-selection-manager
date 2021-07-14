@@ -8,9 +8,9 @@ export enum AdminRegisterResponseError {
 }
 
 export class AdminRegisterResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: AdminRegisterResponseError })
   error?: AdminRegisterResponseError;
 
-  @ApiProperty()
+  @ApiProperty({ type: AdminRegisterResponseDto })
   sessionInfo?: GetSessionInfoResponseDto;
 }

@@ -8,7 +8,7 @@ export enum StudentAddStudentsResponseError {
 }
 
 export class StudentAddStudentsResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: StudentAddStudentsResponseError })
   error?: StudentAddStudentsResponseError;
 
   @ApiProperty()

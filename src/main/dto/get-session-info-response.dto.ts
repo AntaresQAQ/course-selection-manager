@@ -6,6 +6,6 @@ export class GetSessionInfoResponseDto {
   @ApiProperty()
   type?: 'admin' | 'student';
 
-  @ApiProperty()
+  @ApiProperty({ type: StudentInfo || AdminInfo })
   info?: StudentInfo | AdminInfo;
 }
