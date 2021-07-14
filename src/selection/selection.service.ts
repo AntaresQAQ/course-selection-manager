@@ -19,6 +19,15 @@ export class SelectionService {
     private readonly courseRepository: Repository<CourseEntity>,
   ) {}
 
+  async findSelectionById(
+    id: number,
+    loadRelations = false,
+  ): Promise<SelectionEntity> {
+    return await this.selectionRepository.findOne(id, {
+      relations: loadRelations ? ['students', 'courses'] : [],
+    });
+  }
+
   async addSelection(
     name: string,
     students: StudentEntity[],
@@ -26,7 +35,7 @@ export class SelectionService {
     const selection = this.selectionRepository.create();
     selection.name = name;
     selection.students = students;
-    selection.course = [];
+    selection.courses = [];
     await this.selectionRepository.save(selection);
     return selection;
   }
@@ -46,5 +55,14 @@ export class SelectionService {
         }
       },
     );
+  }
+
+  async addStudents(
+    selection: SelectionEntity,
+    students: StudentEntity[],
+  ): Promise<SelectionEntity> {
+    selection.students.push(...students);
+    await this.selectionRepository.save(selection);
+    return await this.findSelectionById(selection.id, true);
   }
 }

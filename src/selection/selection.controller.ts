@@ -6,12 +6,15 @@ import { StudentService } from '@/student/student.service';
 import { StudentEntity } from '@/student/student.entity';
 
 import {
-  AddSelectionRequestDto,
-  AddSelectionResponseDto,
-  AddSelectionResponseError,
-  RemoveSelectionRequestDto,
-  RemoveSelectionResponseDto,
-  RemoveSelectionResponseError,
+  SelectionAddSelectionRequestDto,
+  SelectionAddSelectionResponseDto,
+  SelectionAddSelectionResponseError,
+  SelectionAddStudentsRequestDto,
+  SelectionAddStudentsResponseDto,
+  SelectionAddStudentsResponseError,
+  SelectionRemoveSelectionRequestDto,
+  SelectionRemoveSelectionResponseDto,
+  SelectionRemoveSelectionResponseError,
 } from './dto';
 import { StudentInfo } from '@/student/dto';
 
@@ -30,18 +33,20 @@ export class SelectionController {
   @Post('addSelection')
   async addSelection(
     @Session() session: Record<string, any>,
-    @Body() request: AddSelectionRequestDto,
-  ): Promise<AddSelectionResponseDto> {
+    @Body() request: SelectionAddSelectionRequestDto,
+  ): Promise<SelectionAddSelectionResponseDto> {
     if (!session.uid || !session.type) {
-      return { error: AddSelectionResponseError.NOT_LOGGED };
+      return { error: SelectionAddSelectionResponseError.NOT_LOGGED };
     }
     if (session.type !== 'admin') {
-      return { error: AddSelectionResponseError.PERMISSION_DENIED };
+      return { error: SelectionAddSelectionResponseError.PERMISSION_DENIED };
     }
     const studentIds: number[] = Array.from(new Set(request.studentIds));
     const students = await this.studentService.findStudentsByIds(studentIds);
     if (students.length !== studentIds.length) {
-      return { error: AddSelectionResponseError.STUDENT_ID_NOT_EXISTS };
+      return {
+        error: SelectionAddSelectionResponseError.STUDENT_ID_NOT_EXISTS,
+      };
     }
     const selection = await this.selectionService.addSelection(
       request.name,
@@ -70,20 +75,67 @@ export class SelectionController {
   @Post('removeSelection')
   async removeSelection(
     @Session() session: Record<string, any>,
-    @Body() request: RemoveSelectionRequestDto,
-  ): Promise<RemoveSelectionResponseDto> {
+    @Body() request: SelectionRemoveSelectionRequestDto,
+  ): Promise<SelectionRemoveSelectionResponseDto> {
     if (!session.uid || !session.type) {
-      return { error: RemoveSelectionResponseError.NOT_LOGGED };
+      return { error: SelectionRemoveSelectionResponseError.NOT_LOGGED };
     }
     if (session.type !== 'admin') {
-      return { error: RemoveSelectionResponseError.PERMISSION_DENIED };
+      return { error: SelectionRemoveSelectionResponseError.PERMISSION_DENIED };
     }
     await this.selectionService.removeSelection(request.selectionId);
     return { result: 'SUCCEED' };
   }
 
+  @ApiOperation({
+    summary: 'A request to add students into selection',
+    description: 'Admin only',
+  })
   @Post('addStudents')
-  async addStudents() {}
+  async addStudents(
+    @Session() session: Record<string, any>,
+    @Body() request: SelectionAddStudentsRequestDto,
+  ): Promise<SelectionAddStudentsResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: SelectionAddStudentsResponseError.NOT_LOGGED };
+    }
+    if (session.type !== 'admin') {
+      return { error: SelectionAddStudentsResponseError.PERMISSION_DENIED };
+    }
+    let selection = await this.selectionService.findSelectionById(
+      request.selectionId,
+      true,
+    );
+    if (!selection) {
+      return {
+        error: SelectionAddStudentsResponseError.SELECTION_ID_NOT_EXISTS,
+      };
+    }
+    const studentIds: number[] = Array.from(new Set(request.studentIds));
+    const students = await this.studentService.findStudentsByIds(studentIds);
+    if (students.length !== studentIds.length) {
+      return {
+        error: SelectionAddStudentsResponseError.STUDENT_ID_NOT_EXISTS,
+      };
+    }
+
+    selection = await this.selectionService.addStudents(selection, students);
+
+    return {
+      result: 'SUCCEED',
+      selection: {
+        id: selection.id,
+        name: selection.name,
+        students: selection.students.map(
+          (student: StudentEntity): StudentInfo => ({
+            id: student.id,
+            name: student.name,
+            major: student.major,
+          }),
+        ),
+      },
+    };
+  }
 
   @Post('removeStudents')
   async removeStudents() {}
