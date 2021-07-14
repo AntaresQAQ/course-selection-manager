@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { StudentInfo } from '@/student/dto';
+import { CourseInfoDto } from '@/course/dto';
 
 export class SelectionInfoDto {
   @ApiProperty()
@@ -13,4 +14,10 @@ export class SelectionInfoDto {
     type: StudentInfo,
   })
   students?: StudentInfo[];
+
+  @ApiProperty({
+    isArray: true,
+    type: CourseInfoDto,
+  })
+  courses?: CourseInfoDto[];
 }
