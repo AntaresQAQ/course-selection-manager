@@ -65,4 +65,14 @@ export class SelectionService {
     await this.selectionRepository.save(selection);
     return await this.findSelectionById(selection.id, true);
   }
+
+  async removeStudents(
+    selection: SelectionEntity,
+    studentIds: number[],
+  ): Promise<void> {
+    selection.students = selection.students.filter(
+      (student: StudentEntity) => !studentIds.includes(student.id),
+    );
+    await this.selectionRepository.save(selection);
+  }
 }

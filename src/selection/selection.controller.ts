@@ -2,6 +2,7 @@ import { Body, Controller, Post, Session } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { SelectionService } from './selection.service';
+import { SelectionEntity } from './selection.entity';
 import { StudentService } from '@/student/student.service';
 import { StudentEntity } from '@/student/student.entity';
 import { CourseEntity } from '@/course/course.entity';
@@ -16,19 +17,19 @@ import {
   SelectionGetInfoRequestDto,
   SelectionGetInfoResponseDto,
   SelectionGetInfoResponseError,
+  SelectionGetListRequestDto,
+  SelectionGetListResponseDto,
+  SelectionGetListResponseError,
   SelectionInfoDto,
   SelectionRemoveSelectionRequestDto,
   SelectionRemoveSelectionResponseDto,
   SelectionRemoveSelectionResponseError,
+  SelectionRemoveStudentsRequestDto,
+  SelectionRemoveStudentsResponseDto,
+  SelectionRemoveStudentsResponseError,
 } from './dto';
 import { StudentInfo } from '@/student/dto';
 import { CourseInfoDto } from '@/course/dto';
-import { SelectionGetListRequestDto } from '@/selection/dto/selection-get-list-request.dto';
-import {
-  SelectionGetListResponseDto,
-  SelectionGetListResponseError,
-} from '@/selection/dto/selection-get-list-response.dto';
-import { SelectionEntity } from '@/selection/selection.entity';
 
 @ApiTags('Selection')
 @Controller('selection')
@@ -261,12 +262,32 @@ export class SelectionController {
     };
   }
 
+  @ApiOperation({
+    summary: 'A request to remove students from selection',
+    description: 'Admin only',
+  })
   @Post('removeStudents')
-  async removeStudents() {}
+  async removeStudents(
+    @Session() session: Record<string, any>,
+    @Body() request: SelectionRemoveStudentsRequestDto,
+  ): Promise<SelectionRemoveStudentsResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: SelectionRemoveStudentsResponseError.NOT_LOGGED };
+    }
+    if (session.type !== 'admin') {
+      return { error: SelectionRemoveStudentsResponseError.PERMISSION_DENIED };
+    }
 
-  @Post('getStudentSelections')
-  async getSelections() {}
-
-  @Post('getSelectionStudents')
-  async getSelectionStudents() {}
+    const selection = await this.selectionService.findSelectionById(
+      request.selectionId,
+      true,
+    );
+    if (!selection) {
+      return {
+        error: SelectionRemoveStudentsResponseError.SELECTION_ID_NOT_EXISTS,
+      };
+    }
+    await this.selectionService.removeStudents(selection, request.studentIds);
+    return { result: 'SUCCEED' };
+  }
 }
