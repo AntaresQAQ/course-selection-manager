@@ -19,6 +19,12 @@ export class SelectionService {
     private readonly courseRepository: Repository<CourseEntity>,
   ) {}
 
+  async findAll(loadRelations = false): Promise<SelectionEntity[]> {
+    return await this.selectionRepository.find({
+      relations: loadRelations ? ['students', 'courses'] : [],
+    });
+  }
+
   async findSelectionById(
     id: number,
     loadRelations = false,

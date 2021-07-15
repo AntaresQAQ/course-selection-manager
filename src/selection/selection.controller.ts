@@ -54,20 +54,22 @@ export class SelectionController {
     }
 
     if (session.type === 'admin') {
-      if (!request.studentId) {
-        return { error: SelectionGetListResponseError.STUDENT_ID_NOT_EXISTS };
-      }
-
-      const student = await this.studentService.findStudentById(
-        request.studentId,
-        true,
-      );
-      if (!student) {
-        return { error: SelectionGetListResponseError.STUDENT_ID_NOT_EXISTS };
+      let selections: SelectionEntity[];
+      if (request.studentId) {
+        const student = await this.studentService.findStudentById(
+          request.studentId,
+          true,
+        );
+        if (!student) {
+          return { error: SelectionGetListResponseError.STUDENT_ID_NOT_EXISTS };
+        }
+        selections = student.selections;
+      } else {
+        selections = await this.selectionService.findAll();
       }
 
       return {
-        selections: student.selections.map(
+        selections: selections.map(
           (selection: SelectionEntity): SelectionInfoDto => ({
             id: selection.id,
             name: selection.name,
