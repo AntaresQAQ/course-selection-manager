@@ -4,5 +4,5 @@ import { IsNumber } from 'class-validator';
 export class SelectionGetInfoRequestDto {
   @ApiProperty()
   @IsNumber()
-  id: number;
+  readonly id: number;
 }

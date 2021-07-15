@@ -5,5 +5,5 @@ export class SelectionGetListRequestDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  studentId: number;
+  readonly studentId: number;
 }

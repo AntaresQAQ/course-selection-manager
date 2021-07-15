@@ -5,18 +5,18 @@ export class CourseAddCourseRequestDto {
   @ApiProperty()
   @IsString()
   @Length(1, 30)
-  name: string;
+  readonly name: string;
 
   @ApiProperty()
   @IsString()
   @Length(1, 20)
-  teacher: string;
+  readonly teacher: string;
 
   @ApiProperty()
   @IsNumber()
-  studentsLimit: number;
+  readonly studentsLimit: number;
 
   @ApiProperty()
   @IsNumber()
-  selectionId: number;
+  readonly selectionId: number;
 }

@@ -5,13 +5,13 @@ export class CourseSelectCoursesRequestDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  studentId: number;
+  readonly studentId: number;
 
   @ApiProperty()
   @IsNumber()
-  selectionId: number;
+  readonly selectionId: number;
 
   @ApiProperty({ isArray: true, type: Number })
   @IsArray()
-  courseIds: number[];
+  readonly courseIds: number[];
 }

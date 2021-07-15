@@ -4,5 +4,5 @@ import { IsNumber } from 'class-validator';
 export class SelectionRemoveSelectionRequestDto {
   @ApiProperty()
   @IsNumber()
-  selectionId: number;
+  readonly selectionId: number;
 }
