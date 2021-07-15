@@ -33,4 +33,8 @@ export class CourseService {
     course.selection = selection;
     return await this.courseRepository.save(course);
   }
+
+  async removeCourse(id: number): Promise<void> {
+    await this.courseRepository.delete(id);
+  }
 }

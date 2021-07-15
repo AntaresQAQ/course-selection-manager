@@ -8,6 +8,9 @@ import {
   CourseAddCourseRequestDto,
   CourseAddCourseResponseDto,
   CourseAddCourseResponseError,
+  CourseRemoveCourseRequestDto,
+  CourseRemoveCourseResponseDto,
+  CourseRemoveCourseResponseError,
 } from './dto';
 
 @ApiTags('Course')
@@ -59,6 +62,22 @@ export class CourseController {
     };
   }
 
+  @ApiOperation({
+    summary: 'A request to remove course',
+    description: 'Admin only',
+  })
   @Post('removeCourse')
-  async removeCourse() {}
+  async removeCourse(
+    @Session() session: Record<string, any>,
+    @Body() request: CourseRemoveCourseRequestDto,
+  ): Promise<CourseRemoveCourseResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: CourseRemoveCourseResponseError.NOT_LOGGED };
+    }
+    if (session.type !== 'admin') {
+      return { error: CourseRemoveCourseResponseError.PERMISSION_DENIED };
+    }
+    await this.courseService.removeCourse(request.id);
+    return { result: 'SUCCEED' };
+  }
 }
