@@ -2,6 +2,7 @@ import { Body, Controller, Post, Session } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CourseService } from './course.service';
+import { CourseEntity } from './course.entity';
 import { SelectionService } from '@/selection/selection.service';
 import { SelectionEntity } from '@/selection/selection.entity';
 import { StudentService } from '@/student/student.service';
@@ -20,7 +21,6 @@ import {
   CourseSelectCoursesResponseDto,
   CourseSelectCoursesResponseError,
 } from './dto';
-import { CourseEntity } from '@/course/course.entity';
 
 @ApiTags('Course')
 @Controller('course')
