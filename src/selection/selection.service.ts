@@ -53,10 +53,9 @@ export class SelectionService {
         const selection: SelectionEntity = await entityManager.findOne(
           SelectionEntity,
           id,
-          { relations: ['students'] },
         );
         if (selection) {
-          // await entityManager.delete(CourseEntity, { selection });
+          await entityManager.delete(CourseEntity, { selection });
           await entityManager.remove(selection);
         }
       },
