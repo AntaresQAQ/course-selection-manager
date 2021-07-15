@@ -19,6 +19,15 @@ export class CourseService {
     private readonly studentRepository: Repository<StudentEntity>,
   ) {}
 
+  async findCourseById(
+    id: number,
+    loadRelations = false,
+  ): Promise<CourseEntity> {
+    return await this.courseRepository.findOne(id, {
+      relations: loadRelations ? ['selection', 'students'] : [],
+    });
+  }
+
   async addCourse(
     name: string,
     teacher: string,
@@ -59,5 +68,13 @@ export class CourseService {
         await entityManager.save(student);
       },
     );
+  }
+
+  async cancelCourse(course: CourseEntity, studentId: number): Promise<void> {
+    course.students = course.students.filter(
+      (student: StudentEntity) => student.id !== studentId,
+    );
+    course.currentStudent = course.students.length;
+    await this.courseRepository.save(course);
   }
 }

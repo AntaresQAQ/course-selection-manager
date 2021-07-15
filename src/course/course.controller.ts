@@ -10,6 +10,9 @@ import {
   CourseAddCourseRequestDto,
   CourseAddCourseResponseDto,
   CourseAddCourseResponseError,
+  CourseCancelCourseRequestDto,
+  CourseCancelCourseResponseDto,
+  CourseCancelCourseResponseError,
   CourseRemoveCourseRequestDto,
   CourseRemoveCourseResponseDto,
   CourseRemoveCourseResponseError,
@@ -164,6 +167,32 @@ export class CourseController {
     summary: 'A request to cancel a selected course for student',
     description: 'Can only cancel for oneself except admin',
   })
-  @Post('cancelSelectedCourse')
-  async cancelSelectedCourse() {}
+  @Post('cancelCourse')
+  async cancelCourse(
+    @Session() session: Record<string, any>,
+    @Body() request: CourseCancelCourseRequestDto,
+  ): Promise<CourseCancelCourseResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: CourseCancelCourseResponseError.NOT_LOGGED };
+    }
+
+    if (session.type === 'admin' && !request.studentId) {
+      return { error: CourseCancelCourseResponseError.STUDENT_ID_NOT_EXISTS };
+    }
+
+    const studentId = request.studentId || session.uid;
+    if (session.type !== 'admin' && studentId !== session.uid) {
+      return { error: CourseCancelCourseResponseError.PERMISSION_DENIED };
+    }
+
+    const course = await this.courseService.findCourseById(
+      request.courseId,
+      true,
+    );
+    if (!course) {
+      return { error: CourseCancelCourseResponseError.COURSE_ID_NOT_EXISTS };
+    }
+    await this.courseService.cancelCourse(course, studentId);
+    return { result: 'SUCCEED' };
+  }
 }
