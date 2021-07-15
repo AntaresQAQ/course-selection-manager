@@ -37,4 +37,27 @@ export class CourseService {
   async removeCourse(id: number): Promise<void> {
     await this.courseRepository.delete(id);
   }
+
+  async selectCourse(studentId: number, courseIds: number[]): Promise<void> {
+    await this.connection.transaction(
+      'READ COMMITTED',
+      async (entityManager) => {
+        const student = await entityManager.findOne(StudentEntity, studentId, {
+          relations: ['courses'],
+        });
+        for (const courseId of courseIds) {
+          const course = await entityManager.findOne(CourseEntity, courseId);
+          if (course.currentStudent === course.studentsLimit) {
+            throw new Error(
+              `Can not select course ${course.id} "${course.name}"`,
+            );
+          }
+          course.currentStudent++;
+          await entityManager.save(course);
+          student.courses.push(course);
+        }
+        await entityManager.save(student);
+      },
+    );
+  }
 }
