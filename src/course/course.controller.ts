@@ -8,18 +8,22 @@ import { SelectionEntity } from '@/selection/selection.entity';
 import { StudentService } from '@/student/student.service';
 
 import {
+  CourseInfoDto,
+  CourseSelectedCoursesRequestDto,
+  CourseSelectedCoursesResponseDto,
+  CourseSelectedCoursesResponseError,
   CourseAddCourseRequestDto,
   CourseAddCourseResponseDto,
   CourseAddCourseResponseError,
-  CourseCancelCourseRequestDto,
-  CourseCancelCourseResponseDto,
-  CourseCancelCourseResponseError,
   CourseRemoveCourseRequestDto,
   CourseRemoveCourseResponseDto,
   CourseRemoveCourseResponseError,
   CourseSelectCoursesRequestDto,
   CourseSelectCoursesResponseDto,
   CourseSelectCoursesResponseError,
+  CourseCancelCourseRequestDto,
+  CourseCancelCourseResponseDto,
+  CourseCancelCourseResponseError,
 } from './dto';
 
 @ApiTags('Course')
@@ -30,6 +34,49 @@ export class CourseController {
     private readonly selectionService: SelectionService,
     private readonly studentService: StudentService,
   ) {}
+
+  @ApiOperation({
+    summary: 'A request to get selected courses',
+    description: 'Can only get courses selected by oneself except admin',
+  })
+  @Post('selectedCourses')
+  async selectedCourse(
+    @Session() session: Record<string, any>,
+    @Body() request: CourseSelectedCoursesRequestDto,
+  ): Promise<CourseSelectedCoursesResponseDto> {
+    if (!session.uid || !session.type) {
+      return { error: CourseSelectedCoursesResponseError.NOT_LOGGED };
+    }
+
+    if (session.type === 'admin' && !request.studentId) {
+      return {
+        error: CourseSelectedCoursesResponseError.STUDENT_ID_NOT_EXISTS,
+      };
+    }
+
+    const studentId = request.studentId || session.uid;
+    if (session.type !== 'admin' && studentId !== session.uid) {
+      return { error: CourseSelectedCoursesResponseError.PERMISSION_DENIED };
+    }
+
+    const student = await this.studentService.findStudentById(studentId, true);
+    if (!student) {
+      return {
+        error: CourseSelectedCoursesResponseError.STUDENT_ID_NOT_EXISTS,
+      };
+    }
+    return {
+      courses: student.courses.map(
+        (course: CourseEntity): CourseInfoDto => ({
+          id: course.id,
+          name: course.name,
+          teacher: course.teacher,
+          currentStudent: course.currentStudent,
+          studentsLimit: course.studentsLimit,
+        }),
+      ),
+    };
+  }
 
   @ApiOperation({
     summary: 'A request to add course into selection',
