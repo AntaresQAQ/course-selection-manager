@@ -62,7 +62,7 @@ export class AdminController {
     return {
       sessionInfo: {
         type: session.type,
-        info: {
+        adminInfo: {
           id: admin.id,
           username: admin.username,
         },
@@ -94,7 +94,7 @@ export class AdminController {
     return {
       sessionInfo: {
         type: session.type,
-        info: {
+        adminInfo: {
           id: admin.id,
           username: admin.username,
         },

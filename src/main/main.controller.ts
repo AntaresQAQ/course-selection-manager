@@ -25,10 +25,7 @@ export class MainController {
     if (!session.uid || !['admin', 'student'].includes(session.type)) {
       session.type = null;
       session.uid = null;
-      return {
-        type: null,
-        info: null,
-      };
+      return { type: null };
     }
     return this.mainService.getSessionInfo(session.type, session.uid);
   }

@@ -46,7 +46,7 @@ export class StudentController {
     return {
       sessionInfo: {
         type: 'student',
-        info: {
+        studentInfo: {
           id: student.id,
           name: student.name,
           major: student.major,
