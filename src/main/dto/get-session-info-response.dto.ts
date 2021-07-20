@@ -3,7 +3,7 @@ import { StudentInfo } from '@/student/dto/student-info.dto';
 import { AdminInfo } from '@/admin/dto/admin-info.dto';
 
 export class GetSessionInfoResponseDto {
-  @ApiProperty()
+  @ApiProperty({ enum: ['admin', 'student'] })
   type?: 'admin' | 'student';
 
   @ApiProperty({ type: AdminInfo })
