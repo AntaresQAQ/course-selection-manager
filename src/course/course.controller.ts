@@ -200,10 +200,7 @@ export class CourseController {
       }
     }
     try {
-      await this.courseService.selectCourse(
-        request.studentId,
-        request.courseIds,
-      );
+      await this.courseService.selectCourse(studentId, request.courseIds);
     } catch {
       return { error: CourseSelectCoursesResponseError.STUDENT_LIMIT_EXCEED };
     }
