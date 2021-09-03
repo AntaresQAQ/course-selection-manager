@@ -5,8 +5,13 @@
 大二下学期课设作业
 
 ## 依赖
-nodejs 14+. 
+nodejs 14+
+
 yarn
+
+mariadb
+
+redis
 
 ## 构造
 ```bash
